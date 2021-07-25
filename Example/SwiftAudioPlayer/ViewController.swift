@@ -269,7 +269,9 @@ class ViewController: UIViewController {
     @IBAction func reverbChanged(_ sender: Any) {
         let reverb = reverbSlider.value
         reverbLabel.text = "reverb: \(reverb)"
-        if let node = SAPlayer.shared.audioModifiers[1] as? AVAudioUnitReverb {
+        // jmj
+        if let node = SAPlayer.shared.audioUnit(AVAudioUnitReverb.self) {
+//        if let node = SAPlayer.shared.audioModifiers[1] as? AVAudioUnitReverb {
             node.wetDryMix = reverb
         }
     }
@@ -360,7 +362,10 @@ class ViewController: UIViewController {
             print("slider of index:", slider.tag, "is changed to", slider.value)
             freq[slider.tag] = Int(slider.value)
             print("current frequency : ",freq)
-            if let node = SAPlayer.shared.audioModifiers[2] as? AVAudioUnitEQ{
+            // jmj
+//            if let node = SAPlayer.shared.audioModifiers[2] as? AVAudioUnitEQ {
+            if let node = SAPlayer.shared.audioUnit(AVAudioUnitEQ.self) {
+
                 for i in 0...(node.bands.count - 1){
                     node.bands[i].gain = Float(freq[i])
                 }
@@ -389,3 +394,11 @@ class ViewController: UIViewController {
     }
 }
 
+// jmj
+
+extension SAPlayer {
+    func audioUnit<T: AVAudioUnit>(_ like: T.Type) -> T? {
+        self.audioModifiers.first (where: {$0 is T }) as? T
+    }
+
+}
